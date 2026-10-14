@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "answer",
+    "conversation_state",
+    "focused_questions",
+    "proposed_plan",
+    "memory_candidate",
+    "limitations"
+  ],
+  "properties": {
+    "answer": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 8000
+    },
+    "conversation_state": {
+      "type": "string",
+      "enum": ["clarifying", "proposal_ready", "waiting_evidence"]
+    },
+    "focused_questions": {
+      "type": "array",
+      "maxItems": 3,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 500
+      }
+    },
+    "proposed_plan": {
+      "type": "string",
+      "maxLength": 8000
+    },
+    "memory_candidate": {
+      "anyOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["title", "text", "statement_kind", "evidence_boundary"],
+          "properties": {
+            "title": {"type": "string", "minLength": 1, "maxLength": 160},
+            "text": {"type": "string", "minLength": 1, "maxLength": 2000},
+            "statement_kind": {
+              "type": "string",
+              "enum": ["owner_statement", "external_fact"]
+            },
+            "evidence_boundary": {"type": "string", "minLength": 1, "maxLength": 1000}
+          }
+        }
+      ]
+    },
+    "limitations": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {"type": "string", "maxLength": 500}
+    }
+  }
+}

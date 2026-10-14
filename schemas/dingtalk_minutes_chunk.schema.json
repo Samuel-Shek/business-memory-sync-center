@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["recording_ref", "chunk_index", "chunk_summary", "business_points", "no_business_change"],
+  "properties": {
+    "recording_ref": {"type": "string", "pattern": "^[0-9a-f-]{36}$"},
+    "chunk_index": {"type": "integer", "minimum": 0},
+    "chunk_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["summary", "evidence_boundary", "source_tokens"],
+      "properties": {
+        "summary": {"type": "string", "minLength": 1, "maxLength": 1800},
+        "evidence_boundary": {"type": "string", "minLength": 1, "maxLength": 1200},
+        "source_tokens": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "pattern": "^P[0-9]{6}$"}
+        }
+      }
+    },
+    "business_points": {
+      "type": "array",
+      "maxItems": 40,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["dedupe_key", "title", "category", "memory_kind", "summary", "evidence_boundary", "source_tokens"],
+        "properties": {
+          "dedupe_key": {"type": "string", "maxLength": 120},
+          "title": {"type": "string", "maxLength": 100},
+          "category": {"type": "string", "enum": ["business_cognition", "internal_material", "external_communication"]},
+          "memory_kind": {"type": "string", "enum": ["fact", "judgment", "decision", "status", "open_question"]},
+          "summary": {"type": "string", "maxLength": 1800},
+          "evidence_boundary": {"type": "string", "maxLength": 1200},
+          "source_tokens": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"type": "string", "pattern": "^P[0-9]{6}$"}
+          }
+        }
+      }
+    },
+    "no_business_change": {"type": "boolean"}
+  }
+}

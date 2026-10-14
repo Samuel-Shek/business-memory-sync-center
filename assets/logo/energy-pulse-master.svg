@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
+  <title id="title">业务记忆同步中心</title>
+  <desc id="desc">石墨底上的连续暖白记忆回路与单个琥珀节点</desc>
+  <rect x="48" y="48" width="928" height="928" rx="216" fill="#232421"/>
+  <path d="M747 363C661 235 447 220 310 329C166 444 190 675 351 765C496 846 692 782 757 631C814 499 744 351 616 315C494 280 369 353 342 472C318 577 384 683 486 707C579 728 674 672 696 583C715 505 666 427 590 410C524 395 458 436 444 499C432 553 466 607 518 619C561 629 606 603 616 561C624 528 604 495 572 487C546 481 520 497 514 523" fill="none" stroke="#F5F0E5" stroke-width="66" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="514" cy="523" r="36" fill="#D98935"/>
+</svg>

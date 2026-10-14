@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="__CSRF_TOKEN__">
+  <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1c1c1e" media="(prefers-color-scheme: dark)">
+  <title>业务记忆同步中心</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/app.css?v=20260908">
+</head>
+<body>
+  <a class="skip-link" href="#workspace">跳到主要内容</a>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="应用导航">
+      <div class="identity">
+        <img src="/favicon.svg" alt="" width="34" height="34">
+        <div><strong>业务记忆</strong><span>同步中心</span></div>
+      </div>
+
+      <nav id="primary-nav" aria-label="主要页面">
+        <button type="button" data-page="overview" aria-current="page">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 5.5h6v6h-6zm9 0h6v4h-6zm0 7h6v6h-6zm-9 2h6v4h-6z"/></svg>
+          <span>概览</span>
+        </button>
+        <button type="button" data-page="needs-user">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.8a4 4 0 1 1 0 8 4 4 0 0 1 0-8Zm-7 16.4c.5-4.1 3.1-6.4 7-6.4s6.5 2.3 7 6.4"/></svg>
+          <span>待处理</span><span id="needs-badge" class="nav-badge" hidden>0</span>
+        </button>
+        <button type="button" data-page="sources">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="6" rx="2"/><rect x="4" y="14" width="16" height="6" rx="2"/><path d="M8 7h.01M8 17h.01"/></svg><span>同步来源</span>
+        </button>
+        <span class="nav-section-label">记录</span>
+        <button type="button" data-page="archived-questions">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5h16v11H4zM3.5 4.5h17v3h-17zM9 11.5h6"/></svg>
+          <span>已归档问题</span>
+        </button>
+        <button type="button" data-page="automatic">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 8.2A8 8 0 0 0 5.6 6.1L4 8m1-4v4h4M5 15.8a8 8 0 0 0 13.4 2.1L20 16m-1 4v-4h-4"/></svg>
+          <span>自动处理</span>
+        </button>
+        <button type="button" data-page="activity">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.2"/><path d="M12 7.5V12l3.2 2"/></svg>
+          <span>运行记录</span>
+        </button>
+        <button type="button" data-page="history"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v15H4zM8 9h8M8 13h8M8 17h5"/></svg><span>历史资料</span></button>
+        <a class="secondary-button" href="/alerts-overview">告警与失败项</a>
+        <a class="secondary-button" href="/model-usage">模型用量</a>
+      </nav>
+
+      <details class="system-nav" id="system-nav" open>
+        <summary>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19 13.2v-2.4l-2-.7a7 7 0 0 0-.6-1.4l.9-1.9-1.7-1.7-1.9.9a7 7 0 0 0-1.4-.6l-.7-2H9.2l-.7 2a7 7 0 0 0-1.4.6l-1.9-.9-1.7 1.7.9 1.9a7 7 0 0 0-.6 1.4l-2 .7v2.4l2 .7a7 7 0 0 0 .6 1.4l-.9 1.9 1.7 1.7 1.9-.9a7 7 0 0 0 1.4.6l.7 2h2.4l.7-2a7 7 0 0 0 1.4-.6l1.9.9 1.7-1.7-.9-1.9a7 7 0 0 0 .6-1.4z"/></svg>
+          <span>系统详情</span>
+        </summary>
+        <div>
+          <button type="button" data-page="processes">进程</button>
+          <button type="button" data-page="locks">锁与维护</button>
+        </div>
+      </details>
+
+      <div class="sidebar-footer">
+        <label for="appearance">外观</label>
+        <select id="appearance">
+          <option value="system">跟随系统</option>
+          <option value="light">浅色</option>
+          <option value="dark">深色</option>
+        </select>
+        <p><span id="service-dot" class="service-dot" aria-hidden="true"></span><span id="service-label">正在连接本机服务</span></p>
+      </div>
+    </aside>
+
+    <main id="workspace" class="workspace" tabindex="-1">
+      <header class="topbar">
+        <div><h1 id="page-title">概览</h1><p id="page-subtitle">当前状态与待处理事项</p></div>
+        <div class="topbar-actions"><span id="updated-at"></span><div class="sync-control"><button id="sync-all" class="secondary-button" type="button" disabled aria-describedby="sync-availability">立即同步</button><span id="sync-availability" role="status"></span></div><button id="refresh" class="icon-button" type="button" aria-label="刷新状态" title="刷新状态"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 8.2A8 8 0 0 0 5.6 6.1L4 8m1-4v4h4M5 15.8a8 8 0 0 0 13.4 2.1L20 16m-1 4v-4h-4"/></svg></button></div>
+      </header>
+
+      <div id="live-status" class="sr-only" role="status" aria-live="polite"></div>
+      <div id="maintenance-banner" class="banner" hidden>记忆库正在维护。当前可以查看状态，写入操作暂缓。</div>
+
+      <section class="page overview-page" data-view="overview">
+        <article id="hero" class="hero" aria-labelledby="hero-title">
+          <div id="hero-icon" class="hero-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v6m0 4h.01"/></svg></div>
+          <div class="hero-copy"><span id="hero-eyebrow" class="eyebrow">同步状态</span><h2 id="hero-title">正在读取状态</h2><p id="hero-detail">正在连接本机同步服务。</p></div>
+          <div class="hero-action">
+            <button id="hero-next" class="primary-button" type="button" hidden>查看待处理</button>
+          </div>
+        </article>
+
+        <section class="attention-section" aria-labelledby="attention-title">
+          <header class="section-header"><h2 id="attention-title">需要你处理 <span id="metric-needs" class="section-count">—</span></h2><button id="overview-needs-all" type="button" class="text-button">打开问题工作台 <span aria-hidden="true">→</span></button></header>
+          <div id="overview-needs-list" class="attention-list"><p class="empty">正在读取待处理事项…</p></div>
+        </section>
+
+        <article id="action-card" class="action-card" hidden aria-labelledby="action-title">
+          <header>
+            <span id="action-state-dot" class="state-dot warning" aria-hidden="true"></span>
+            <div><span class="eyebrow">同步任务</span><h2 id="action-title">正在准备同步</h2><p id="action-detail">任务状态正在读取。</p></div>
+            <div class="action-meta"><span id="action-elapsed">已用时 —</span><button id="action-dismiss" class="text-button" type="button" hidden title="仅从概览收起，运行记录仍然保留">收起记录</button></div>
+          </header>
+          <div id="action-progress-row" class="action-progress-row"><progress id="action-progress" max="1" aria-label="同步进度"></progress><strong id="action-progress-label">准备中</strong></div>
+          <p id="action-stage" class="action-stage">等待第一个步骤开始</p>
+          <details id="action-disclosure" class="action-disclosure"><summary id="action-disclosure-label">查看执行步骤</summary><ol id="action-steps" class="action-steps"></ol></details>
+        </article>
+
+        <button id="overview-sources" type="button" class="source-summary-link" data-jump="sources"><span><strong>同步来源</strong><span id="source-summary">正在读取来源状态…</span></span><span class="source-summary-end">查看来源 <span aria-hidden="true">→</span></span></button>
+
+        <div class="metric-grid" aria-label="后台处理与历史">
+          <button type="button" data-jump="automatic"><span>自动处理</span><strong id="metric-automatic">—</strong><small>系统继续跟进</small></button>
+          <div><span>近 7 天已结束</span><strong id="metric-resolved">—</strong><small>处理记录已保留</small></div>
+          <button type="button" data-jump="history"><span>历史资料</span><strong id="metric-history">—</strong><small>查看完整记录</small></button>
+        </div>
+        <details class="recent-disclosure"><summary>最近处理记录</summary><div id="recent-resolved" class="quiet-list"><p class="empty">正在读取…</p></div></details>
+      </section>
+
+      <section class="page" data-view="sources" hidden>
+        <header class="section-header"><h2>全部同步来源</h2><span id="overall-state" class="status-label">正在读取</span></header>
+        <p class="sources-intro">查看当前状态、最近成功时间和需要处理的原因。</p>
+        <div id="source-list" class="source-list"><p class="empty">正在读取同步来源…</p></div>
+      </section>
+
+      <section class="page" data-view="needs-user" data-views="needs-user archived-questions" hidden>
+        <div id="workbench-filters" class="workbench-filters" role="group" aria-label="问题处理状态">
+          <button type="button" data-issue-scope="attention" aria-pressed="true">待处理</button>
+          <button type="button" data-issue-scope="automatic" aria-pressed="false">系统处理中</button>
+          <button type="button" data-issue-scope="waiting" aria-pressed="false">等待条件</button>
+          <button type="button" data-issue-scope="closed" aria-pressed="false">已结束</button>
+          <button type="button" data-issue-scope="all" aria-pressed="false">全部</button>
+          <button type="button" id="issue-filter-reset" class="text-button" hidden>返回全部待处理</button>
+        </div>
+        <section id="media-history" hidden aria-label="媒体处理记录"></section>
+        <div class="case-workbench">
+          <div class="master-pane">
+            <div class="pane-intro"><strong id="needs-count-label">待处理主题 · —</strong><span id="needs-item-count">相近事项会归纳在同一主题下</span></div>
+            <div id="needs-list" class="case-list" role="listbox" aria-label="待处理主题"></div>
+          </div>
+          <div id="case-scroll" class="workbench-main">
+            <section id="issue-window" aria-label="具体问题处理" hidden>
+              <article id="issue-detail" class="detail-pane"></article>
+              <aside id="issue-chat" class="conversation-pane" aria-label="将本问题转到 Codex"></aside>
+            </section>
+            <article id="needs-detail" class="detail-pane empty-detail">选择一个主题，先看清需要你决定什么，再在下方直接和 GPT 讨论。</article>
+            <aside id="case-conversation" class="conversation-pane empty-conversation" aria-label="与 GPT 对话">
+              <div class="empty-conversation-copy"><strong>这里会保留当前问题的完整对话</strong><span>普通聊天不会自动写入业务记忆。</span></div>
+            </aside>
+          </div>
+        </div>
+        <details class="recent-disclosure" id="alert-history">
+          <summary>已结束提醒记录</summary>
+          <p id="alert-list-health" class="error-text" role="status"></p>
+          <div id="alert-list" class="alert-summary-grid"></div>
+        </details>
+      </section>
+
+      <section class="page" data-view="automatic" hidden>
+        <div class="page-intro"><div><span class="eyebrow">无需逐条查看</span><h2>系统会继续处理这些事项</h2><p>新证据到达后，相关主题会自动复核；重复、历史和已替代内容会退出当前工作量。</p></div><span id="automatic-count" class="large-count">—</span></div>
+        <div id="automatic-list" class="automatic-list"></div>
+        <section aria-labelledby="content-relations-title" class="panel">
+          <h2 id="content-relations-title">资料关联</h2>
+          <p>同样的内容可复用读取结果，每个出处、版本和业务事件分别保留。</p>
+          <p id="content-relations-status" role="status">正在读取关联登记…</p>
+          <div id="content-relations-list"></div>
+          <button id="content-relations-more" type="button" hidden>查看下一页</button>
+          <div id="content-relations-detail" aria-live="polite"></div>
+        </section>
+      </section>
+
+      <section class="page" data-view="activity" hidden>
+        <div class="page-intro compact"><div><span class="eyebrow">脱敏运行记录</span><h2>最近发生了什么</h2></div></div>
+        <ol id="activity-list" class="timeline"></ol>
+      </section>
+
+      <section class="page" data-view="processes" hidden>
+        <div class="page-intro compact"><div><span class="eyebrow">系统诊断</span><h2>进程</h2><p>高级运行状态默认收在“系统”里，不影响日常工作量。</p></div></div>
+        <div id="process-list" class="diagnostic-grid"></div>
+      </section>
+
+      <section class="page" data-view="locks" hidden>
+        <div class="page-intro compact"><div><span class="eyebrow">系统诊断</span><h2>锁与维护</h2><p>用于判断当前是否可安全写入，不代表业务事实。</p></div></div>
+        <div id="lock-list" class="diagnostic-grid"></div>
+      </section>
+
+      <section class="page" data-view="history" hidden>
+        <div class="history-toolbar"><div><span class="eyebrow">审计与搜索</span><h2>历史</h2><p>培训、旧台账和已收口证据只在这里出现。</p></div><label class="search-field"><span class="sr-only">搜索历史</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.2"/><path d="m15.5 15.5 4 4"/></svg><input id="history-search" type="search" placeholder="搜索历史事项"></label></div>
+        <div id="history-list" class="quiet-list"></div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="sync-dialog">
+    <form method="dialog" class="dialog-card">
+      <span class="eyebrow">本机操作</span><h2>同步全部来源？</h2><p>会启动一次本机同步，不发送群通知或批次汇报。</p>
+      <footer><button value="cancel" class="secondary-button">取消</button><button id="sync-confirm" value="confirm" class="primary-button" disabled>开始同步</button></footer>
+    </form>
+  </dialog>
+
+  <dialog id="choice-dialog">
+    <form method="dialog" class="dialog-card">
+      <span class="eyebrow">应用前预览</span><h2 id="choice-title">确认这个处理动作？</h2><p id="choice-effect"></p>
+      <div id="choice-preview-detail" class="preview-detail" hidden></div>
+      <div class="safety-note">GPT 回复不是事实来源；方案结案也不代表公司批准或业务事实成立。</div>
+      <p id="choice-error" class="error-text" role="alert"></p>
+      <footer><button value="cancel" class="secondary-button">取消</button><button id="choice-confirm" value="confirm" class="primary-button">明确应用</button></footer>
+    </form>
+  </dialog>
+
+  <dialog id="defer-dialog">
+    <form method="dialog" class="dialog-card" id="defer-form">
+      <span class="eyebrow">延期处理</span><h2>何时重新提醒？</h2><p>没有默认选项。到期或证据提前变化时，这个问题会重新出现。</p>
+      <fieldset class="defer-options">
+        <legend class="sr-only">选择延期日期</legend>
+        <label><input type="radio" name="defer-choice" value="1"> 明天</label>
+        <label><input type="radio" name="defer-choice" value="3"> 3 天后</label>
+        <label><input type="radio" name="defer-choice" value="7"> 7 天后</label>
+        <label><input type="radio" name="defer-choice" value="custom"> 自定义日期</label>
+      </fieldset>
+      <label class="custom-date" for="defer-date">日期<input id="defer-date" type="date" disabled></label>
+      <p id="defer-error" class="error-text" role="alert"></p>
+      <footer><button value="cancel" class="secondary-button">取消</button><button id="defer-confirm" value="confirm" class="primary-button">预览延期</button></footer>
+    </form>
+  </dialog>
+
+  <dialog id="mail-safety-dialog">
+    <form method="dialog" class="dialog-card">
+      <span class="eyebrow">一次人工安全确认</span>
+      <h2>请先在另一台设备核对这封测试邮件</h2>
+      <p>确认它现在是否仍保持“未读”。系统不会替你选择，也不会在等待时自动继续。</p>
+      <div class="safety-note">只有你明确确认“另一台设备仍是未读”后，邮件同步才会在下一轮自动续跑；原故障仍要等新的成功证据才能关闭。</div>
+      <p id="mail-safety-error" class="error-text" role="alert"></p>
+      <footer class="choice-footer">
+        <button value="cancel" class="secondary-button">暂不确认</button>
+        <button id="mail-safety-changed" type="button" class="secondary-button">未读状态已改变</button>
+        <button id="mail-safety-confirm" type="button" class="primary-button">另一台设备仍是未读</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <dialog id="issue-choice-dialog" aria-labelledby="issue-choice-title">
+    <form class="dialog-card" id="issue-choice-form">
+      <span class="eyebrow">当前问题的人工选择</span><h2 id="issue-choice-title"></h2>
+      <p id="issue-choice-description"></p>
+      <label for="issue-note" id="issue-note-label">核对说明</label>
+      <textarea id="issue-note" rows="4" maxlength="1000"></textarea>
+      <p id="issue-choice-error" class="error-text" role="alert"></p>
+      <footer><button id="issue-choice-cancel" type="button" class="secondary-button" autofocus>取消</button><button id="issue-choice-confirm" type="submit" class="primary-button">确认</button></footer>
+    </form>
+  </dialog>
+
+  <script src="/status-contract.js?v=20260908" defer></script>
+  <script src="/alert-workbench.js?v=20260908" defer></script>
+  <script src="/codex-handoff.js?v=20260908" defer></script>
+  <script src="/workbench.js?v=20260908" defer></script>
+  <script src="/content-relations.js?v=20260914" defer></script>
+  <script src="/app.js?v=20260908" defer></script>
+</body>
+</html>

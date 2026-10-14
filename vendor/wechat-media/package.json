@@ -1,0 +1,8 @@
+{
+  "name": "business-wechat-media-runtime",
+  "private": true,
+  "version": "1.0.0",
+  "dependencies": {
+    "silk-wasm": "3.7.1"
+  }
+}

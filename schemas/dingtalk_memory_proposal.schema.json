@@ -1,0 +1,165 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "batch_id",
+    "source_summary",
+    "candidates",
+    "claim_relations",
+    "no_business_change"
+  ],
+  "properties": {
+    "batch_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "source_summary": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "title",
+            "summary",
+            "evidence_boundary",
+            "source_tokens"
+          ],
+          "properties": {
+            "title": {
+              "type": "string",
+              "maxLength": 100
+            },
+            "summary": {
+              "type": "string",
+              "maxLength": 1600
+            },
+            "evidence_boundary": {
+              "type": "string",
+              "maxLength": 1000
+            },
+            "source_tokens": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "pattern": "^S[0-9]{3}$"
+              }
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "candidates": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "action",
+          "dedupe_key",
+          "title",
+          "category",
+          "memory_kind",
+          "summary",
+          "evidence_boundary",
+          "source_tokens",
+          "existing_memory_id",
+          "conflict_reason"
+        ],
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "annotate_page",
+              "link_existing",
+              "conflict"
+            ]
+          },
+          "dedupe_key": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "business_cognition",
+              "internal_material",
+              "external_communication"
+            ]
+          },
+          "memory_kind": {
+            "type": "string",
+            "enum": [
+              "fact",
+              "judgment",
+              "decision",
+              "status",
+              "open_question"
+            ]
+          },
+          "summary": {
+            "type": "string",
+            "maxLength": 1800
+          },
+          "evidence_boundary": {
+            "type": "string",
+            "maxLength": 1200
+          },
+          "source_tokens": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "pattern": "^S[0-9]{3}$"
+            }
+          },
+          "existing_memory_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^BUSINESS-[0-9]{8}-[0-9]{3}$"
+          },
+          "conflict_reason": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 800
+          }
+        }
+      }
+    },
+    "claim_relations": {
+      "type": "array",
+      "maxItems": 40,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["claim_handle", "relation", "source_tokens", "reason"],
+        "properties": {
+          "claim_handle": {"type": "string", "pattern": "^claim-[0-9a-f]{20}$"},
+          "relation": {"type": "string", "enum": ["support", "refute", "supersede", "duplicate", "unrelated"]},
+          "source_tokens": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"type": "string", "pattern": "^S[0-9]{3}$"}
+          },
+          "reason": {"type": "string", "maxLength": 500}
+        }
+      }
+    },
+    "no_business_change": {
+      "type": "boolean"
+    }
+  }
+}

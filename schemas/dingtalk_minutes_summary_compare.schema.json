@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "recording_ref",
+    "native_summary_available",
+    "overall_relation",
+    "agreements",
+    "independent_only",
+    "native_only",
+    "conflicts",
+    "publication_note",
+    "evidence_boundary"
+  ],
+  "properties": {
+    "recording_ref": {"type": "string", "pattern": "^[0-9a-f-]{36}$"},
+    "native_summary_available": {"type": "boolean"},
+    "overall_relation": {
+      "type": "string",
+      "enum": ["matched", "partially_matched", "discrepant", "native_missing"]
+    },
+    "agreements": {
+      "type": "array",
+      "maxItems": 12,
+      "items": {"type": "string", "minLength": 1, "maxLength": 240}
+    },
+    "independent_only": {
+      "type": "array",
+      "maxItems": 12,
+      "items": {"type": "string", "minLength": 1, "maxLength": 240}
+    },
+    "native_only": {
+      "type": "array",
+      "maxItems": 12,
+      "items": {"type": "string", "minLength": 1, "maxLength": 240}
+    },
+    "conflicts": {
+      "type": "array",
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["topic", "independent_view", "native_view", "handling"],
+        "properties": {
+          "topic": {"type": "string", "minLength": 1, "maxLength": 120},
+          "independent_view": {"type": "string", "minLength": 1, "maxLength": 360},
+          "native_view": {"type": "string", "minLength": 1, "maxLength": 360},
+          "handling": {"type": "string", "minLength": 1, "maxLength": 240}
+        }
+      }
+    },
+    "publication_note": {"type": "string", "minLength": 1, "maxLength": 480},
+    "evidence_boundary": {"type": "string", "minLength": 1, "maxLength": 800}
+  }
+}

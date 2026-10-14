@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["status", "no_business_change", "source_summary", "candidates"],
+  "properties": {
+    "status": {"type": "string", "enum": ["completed"]},
+    "no_business_change": {"type": "boolean"},
+    "source_summary": {"type": "string", "minLength": 5, "maxLength": 1800},
+    "candidates": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "candidate_memory_id", "disposition", "title", "category", "memory_kind",
+          "summary", "evidence_boundary", "related_memory_ids", "conflict_reason"
+        ],
+        "properties": {
+          "candidate_memory_id": {"type": "string", "pattern": "^BUSINESS-[0-9]{8}-[0-9]{3}$"},
+          "disposition": {"type": "string", "enum": ["unchanged", "revise"]},
+          "title": {"type": "string", "minLength": 1, "maxLength": 160},
+          "category": {"type": "string", "enum": ["business_cognition", "internal_material", "external_communication"]},
+          "memory_kind": {"type": "string", "enum": ["fact", "judgment", "decision", "status", "open_question"]},
+          "summary": {"type": "string", "minLength": 1, "maxLength": 1800},
+          "evidence_boundary": {"type": "string", "minLength": 1, "maxLength": 1200},
+          "related_memory_ids": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {"type": "string", "pattern": "^BUSINESS-[0-9]{8}-[0-9]{3}$"}
+          },
+          "conflict_reason": {"type": ["string", "null"], "maxLength": 800}
+        }
+      }
+    }
+  }
+}

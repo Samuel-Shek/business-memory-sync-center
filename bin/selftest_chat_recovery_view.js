@@ -1,0 +1,10 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict'),{test}=require('node:test');
+const esc=x=>String(x??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
+const context=vm.createContext({ui:{},api:()=>{},esc,formatTime:x=>x||'待核验'});
+const code=fs.readFileSync(path.join(__dirname,'../decision-center/workbench.js'),'utf8').replace('return { listPath,','return { chatCommitRecovery, listPath,');
+vm.runInContext(code+';globalThis.w=workbenchWorkspace;',context);
+test('legacy receipt remains compatible',()=>assert.equal(context.w.chatCommitRecovery({}),''));
+test('verified child displays independent historical receipt',()=>{const html=context.w.chatCommitRecovery({chat_recovery:{candidates:[{batch_id:'parent',child_batch_id:'child',recovery_verified:true,message_count:2,completion_sha256:'receipt',completed_at:'today'}]}});assert.match(html,/该批次已恢复/);assert.match(html,/原批次：parent/);assert.match(html,/关联子批次：child/);assert.match(html,/不代表其他新故障已恢复/);});
+test('unverified completion and escaped causes stay safe',()=>{const html=context.w.chatCommitRecovery({chat_recovery:{candidates:[{batch_id:'<img>',recovery_verified:false,status:'applied',recovery_reason:'prepared_recovery_not_additive',failures:[{stage:'rollback',original_error_code:'validation_failed',rollback_error_code:'context_unavailable'}]}]}});assert.doesNotMatch(html,/该批次已恢复|<img>/);assert.match(html,/已安全停止/);assert.match(html,/validation_failed/);assert.match(html,/context_unavailable/);});
+test('read failure never means recovered',()=>assert.match(context.w.chatCommitRecovery({chat_recovery:{evidence_gap:'unavailable'}}),/不能据此判定恢复/));

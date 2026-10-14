@@ -1,0 +1,11 @@
+{
+  "payload": {
+    "providers": {},
+    "routing": {
+      "enabled_providers": [],
+      "text_chain": [],
+      "vision_chain": []
+    }
+  },
+  "version": "synthetic-disabled-example"
+}

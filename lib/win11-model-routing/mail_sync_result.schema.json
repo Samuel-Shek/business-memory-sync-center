@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["success", "error"]
+    },
+    "sync_result": {
+      "type": "string"
+    },
+    "prefilter_checked": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "prefilter_ignored": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "business_processed": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "ignored_verification_code": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "ignored_mailbox_security": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "ignored_advertising_marketing": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "ignored_automated_noise": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "ignored_not_business_related": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "pending_remaining": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "report_path": {
+      "type": "string"
+    },
+    "error_summary": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "status",
+    "sync_result",
+    "prefilter_checked",
+    "prefilter_ignored",
+    "business_processed",
+    "ignored_verification_code",
+    "ignored_mailbox_security",
+    "ignored_advertising_marketing",
+    "ignored_automated_noise",
+    "ignored_not_business_related",
+    "pending_remaining",
+    "report_path",
+    "error_summary"
+  ],
+  "additionalProperties": false
+}

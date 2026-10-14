@@ -1,0 +1,16 @@
+{
+  "version": "cross-source-v1",
+  "mode": "exact_reuse",
+  "owner_authorized": true,
+  "domain": "owner-business-archive",
+  "purpose": "business-memory",
+  "permission_epoch": "business-scope-260914-v1",
+  "exact_formats": [
+    ".png"
+  ],
+  "cloud_collection_enabled": false,
+  "cross_format_reuse": false,
+  "original_cleanup": false,
+  "source_scope": "existing ledgers, registered business directories and 68-entry DingTalk audit",
+  "rules": "docs/跨来源资料关联规则_260914.md"
+}

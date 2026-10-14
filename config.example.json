@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "retirement_active": true,
+  "retirement": {
+    "status": "owner_retired"
+  },
+  "sync_center": {
+    "host": "127.0.0.1",
+    "port": 17626
+  },
+  "memory_writers": [],
+  "automatic_memory_validation": {
+    "enabled": false
+  },
+  "dingtalk_automation": {
+    "enabled": false
+  },
+  "email_sync": {
+    "enabled": false
+  },
+  "wechat_chat": {
+    "enabled": false
+  },
+  "model_routing": {
+    "enabled": false
+  },
+  "source_governance": {
+    "enabled": false
+  }
+}
